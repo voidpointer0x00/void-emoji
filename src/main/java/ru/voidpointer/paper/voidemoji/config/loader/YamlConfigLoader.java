@@ -5,7 +5,6 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.configurate.CommentedConfigurationNode;
 import org.spongepowered.configurate.ConfigurateException;
-import org.spongepowered.configurate.RepresentationHint;
 import org.spongepowered.configurate.serialize.SerializationException;
 import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 
@@ -57,7 +56,6 @@ public class YamlConfigLoader {
     @Contract("_, !null, null -> param3")
     static <ConfigT> ConfigT save(@NotNull YamlConfigurationLoader yamlLoader, Path destination, ConfigT config) {
         CommentedConfigurationNode rootNode = yamlLoader.createNode();
-        rootNode.hint(RepresentationHint.of("flow", String.class), "block");
         try {
             rootNode.set(config);
         } catch (final SerializationException ex) {
