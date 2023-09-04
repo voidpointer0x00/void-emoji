@@ -6,6 +6,7 @@ import ru.voidpointer.paper.voidemoji.config.loader.ConfigLoader;
 import ru.voidpointer.paper.voidemoji.config.reload.AutoReloadConfigService;
 import ru.voidpointer.paper.voidemoji.listener.ChatListener;
 
+@SuppressWarnings("unused")
 public final class VoidEmoji extends JavaPlugin {
     private EmojiConfig emojiConfig;
     private AutoReloadConfigService autoReloadConfigService;
