@@ -17,7 +17,14 @@ public class EmojiConfig {
         emojis = ImmutableMap.of(
                 ":heart:", new Emoji("❤"),
                 ":smile:", new Emoji("\uD83D\uDE04"),
-                ":clown:", new Emoji("\uD83E\uDD21")
+                ":clown:", new Emoji("\uD83E\uDD21"),
+                ":kekw:", new Emoji("\uE000"),
+                ":sadcat:", new Emoji("\uE001"),
+                ":pepeclown:", new Emoji("\uE002"),
+                ":kekwait:", new Emoji("\uE003"),
+                ":listening:", new Emoji("\uE004"),
+                ":smirk:", new Emoji("\uE005"),
+                ":catsmirk:", new Emoji("\uE006")
         );
     }
 
