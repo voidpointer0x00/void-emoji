@@ -10,11 +10,14 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 @ConfigSerializable
 public class EmojiConfig {
+    @SuppressWarnings("FieldMayBeFinal") /* implicitly written via reflection */
     private Map<String, Emoji> emojis;
 
     public EmojiConfig() {
         emojis = ImmutableMap.of(
-                ":heart:", new Emoji("<3")
+                ":heart:", new Emoji("❤"),
+                ":smile:", new Emoji("\uD83D\uDE04"),
+                ":clown:", new Emoji("\uD83E\uDD21")
         );
     }
 
