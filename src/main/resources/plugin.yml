@@ -1,0 +1,8 @@
+name: VoidEmoji
+version: '${version}'
+main: ru.voidpointer.paper.voidemoji.VoidEmoji
+api-version: '1.20'
+folia-support: true
+
+libraries:
+  - 'org.spongepowered:configurate-yaml:4.1.2'
