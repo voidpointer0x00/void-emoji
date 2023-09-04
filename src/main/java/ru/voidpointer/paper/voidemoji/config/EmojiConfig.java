@@ -24,24 +24,24 @@ public class EmojiConfig {
             ":catsmirk:", new Emoji("\uE006")
     );
 
-    private transient Map<String, Emoji> unmodifiableEmojis;
+    private transient Map<String, Emoji> emojisView;
     private final transient ReadWriteLock cachedEmojisLock = new ReentrantReadWriteLock();
 
     public Map<String, Emoji> getEmojis() {
         try {
             cachedEmojisLock.readLock().lock();
-            if (unmodifiableEmojis == null) {
+            if (emojisView == null) {
                 cachedEmojisLock.readLock().unlock();
                 cachedEmojisLock.writeLock().lock();
                 try {
-                    if (unmodifiableEmojis == null)
-                        unmodifiableEmojis = Collections.unmodifiableMap(emojis);
+                    if (emojisView == null)
+                        emojisView = Collections.unmodifiableMap(emojis);
                     cachedEmojisLock.readLock().lock();
                 } finally {
                     cachedEmojisLock.writeLock().unlock();
                 }
             }
-            return unmodifiableEmojis;
+            return emojisView;
         } finally {
             cachedEmojisLock.readLock().unlock();
         }
