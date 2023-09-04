@@ -27,6 +27,7 @@ public class EmojiConfig {
     private transient Map<String, Emoji> emojisView;
     private final transient ReadWriteLock cachedEmojisLock = new ReentrantReadWriteLock();
 
+    @SuppressWarnings("DuplicatedCode")
     public Map<String, Emoji> getEmojis() {
         try {
             cachedEmojisLock.readLock().lock();
