@@ -35,6 +35,8 @@ public class YamlConfigLoader {
             Class<ConfigT> type,
             Supplier<ConfigT> defaultSupplier
     ) {
+        if (!pathToLoad.toFile().exists())
+            return defaultSupplier.get();
         CommentedConfigurationNode rootNode;
         try {
             rootNode = yamlLoader.load();
