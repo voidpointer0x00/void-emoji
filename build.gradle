@@ -16,7 +16,8 @@ repositories {
 dependencies {
     /* runtime dependencies */
     compileOnly 'io.papermc.paper:paper-api:1.20.1-R0.1-SNAPSHOT' /* minecraft server */
-    compileOnly 'org.spongepowered:configurate-yaml:4.1.2' /* yaml configuration */
+    compileOnly 'org.spongepowered:configurate-hocon:4.1.2' /* HOCON configuration */
+    compileOnly 'com.typesafe:config:1.4.2' /* HOCON serialization backend library */
 
     /* shaded-in (gradle shadow plugin) */
     implementation 'co.aikar:acf-paper:0.5.1-SNAPSHOT'; /* paper commands framework */

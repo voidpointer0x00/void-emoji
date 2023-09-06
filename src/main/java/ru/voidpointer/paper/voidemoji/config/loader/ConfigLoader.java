@@ -23,7 +23,7 @@ public class ConfigLoader<ConfigT> {
      */
     public ConfigLoader(File dataFolder, Class<ConfigT> configClass) throws IllegalArgumentException {
         this.destination = dataFolder.toPath().resolve(
-                configClass.getSimpleName().replaceAll("([a-z])([A-Z])", "$1-$2").toLowerCase() + ".yml");
+                configClass.getSimpleName().replaceAll("([a-z])([A-Z])", "$1-$2").toLowerCase() + ".conf");
         this.configClass = configClass;
 
         final Constructor<ConfigT> constructor;
@@ -51,11 +51,11 @@ public class ConfigLoader<ConfigT> {
 
     public ConfigT loadAndSaveDefaultIfNotExists() {
         return destination.toFile().exists()
-                ? YamlConfigLoader.load(destination, configClass, defaultSupplier)
-                : YamlConfigLoader.loadAndSave(destination, configClass, defaultSupplier);
+                ? ConfigurateConfigLoader.load(destination, configClass, defaultSupplier)
+                : ConfigurateConfigLoader.loadAndSave(destination, configClass, defaultSupplier);
     }
 
     public void save(final ConfigT configT) {
-        YamlConfigLoader.save(destination, configT);
+        ConfigurateConfigLoader.save(destination, configT);
     }
 }

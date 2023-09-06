@@ -3,21 +3,21 @@ package ru.voidpointer.paper.voidemoji.config.loader;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.spongepowered.configurate.CommentedConfigurationNode;
 import org.spongepowered.configurate.ConfigurateException;
+import org.spongepowered.configurate.ConfigurationNode;
+import org.spongepowered.configurate.hocon.HoconConfigurationLoader;
+import org.spongepowered.configurate.loader.ConfigurationLoader;
 import org.spongepowered.configurate.serialize.SerializationException;
-import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 
 import java.nio.file.Path;
 import java.util.function.Supplier;
 
-import static org.spongepowered.configurate.yaml.NodeStyle.BLOCK;
-import static org.spongepowered.configurate.yaml.YamlConfigurationLoader.builder;
+import static org.spongepowered.configurate.hocon.HoconConfigurationLoader.builder;
 
 @Slf4j
-public class YamlConfigLoader {
+public class ConfigurateConfigLoader {
     static <T> T loadAndSave(Path src, Class<T> type, Supplier<T> defaultSupplier) {
-        YamlConfigurationLoader loader = builder().nodeStyle(BLOCK).path(src).build();
+        HoconConfigurationLoader loader = builder().path(src).build();
         return save(loader, src, load(loader, src, type, defaultSupplier));
     }
 
@@ -26,18 +26,18 @@ public class YamlConfigLoader {
     }
 
     static <ConfigT> void save(Path pathToSave, ConfigT configT) {
-        save(builder().nodeStyle(BLOCK).path(pathToSave).build(), pathToSave, configT);
+        save(builder().path(pathToSave).build(), pathToSave, configT);
     }
 
     static <ConfigT> ConfigT load(
-            YamlConfigurationLoader yamlLoader,
+            ConfigurationLoader<? extends ConfigurationNode> yamlLoader,
             Path pathToLoad,
             Class<ConfigT> type,
             Supplier<ConfigT> defaultSupplier
     ) {
         if (!pathToLoad.toFile().exists())
             return defaultSupplier.get();
-        CommentedConfigurationNode rootNode;
+        ConfigurationNode rootNode;
         try {
             rootNode = yamlLoader.load();
             log.trace("{} loaded", pathToLoad);
@@ -56,8 +56,12 @@ public class YamlConfigLoader {
     }
 
     @Contract("_, !null, null -> param3")
-    static <ConfigT> ConfigT save(@NotNull YamlConfigurationLoader yamlLoader, Path destination, ConfigT config) {
-        CommentedConfigurationNode rootNode = yamlLoader.createNode();
+    static <ConfigT> ConfigT save(
+            @NotNull ConfigurationLoader<? extends ConfigurationNode> yamlLoader,
+            Path destination,
+            ConfigT config
+    ) {
+        ConfigurationNode rootNode = yamlLoader.createNode();
         try {
             rootNode.set(config);
         } catch (final SerializationException ex) {
