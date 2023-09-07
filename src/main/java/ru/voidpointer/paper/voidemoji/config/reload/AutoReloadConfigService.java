@@ -28,6 +28,11 @@ public final class AutoReloadConfigService {
         }
     }
 
+    public void ifSubscribable(final Runnable runnable) {
+        if (watchServiceListener != null)
+            runnable.run();
+    }
+
     /**
      * @throws IllegalStateException if was not yet initialized via startWatchingForModifications()
      *      or the initialization failed.
