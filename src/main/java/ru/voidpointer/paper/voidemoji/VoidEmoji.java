@@ -8,11 +8,19 @@ import ru.voidpointer.paper.voidemoji.config.loader.ConfigLoader;
 import ru.voidpointer.paper.voidemoji.config.reload.AutoReloadConfigService;
 import ru.voidpointer.paper.voidemoji.listener.ChatListener;
 import ru.voidpointer.paper.voidemoji.locale.VoidLocales;
+import ru.voidpointer.paper.voidemoji.resourcepack.PackFileServer;
+
+import java.nio.file.Path;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 @SuppressWarnings("unused")
 public final class VoidEmoji extends JavaPlugin {
     private EmojiConfig emojiConfig;
     private AutoReloadConfigService reloadConfigService;
+
+    private volatile PackFileServer packFileServer;
+    private final ReadWriteLock packFileServerRwl = new ReentrantReadWriteLock();
 
     private ChatListener chatListener;
 
@@ -35,6 +43,24 @@ public final class VoidEmoji extends JavaPlugin {
                 }
             });
         }
+        /* start resource pack hosting server in another thread to prevent halt on MC server startup */
+        new Thread(() -> {
+            packFileServerRwl.writeLock().lock();
+            try {
+                packFileServer = new PackFileServer(
+                        getSLF4JLogger(), getDataFolder(), reloadConfigService, this::saveResource);
+                packFileServer.start().ifPresent(startupException -> {
+                    getSLF4JLogger().error(
+                            "Resource pack hosting http server startup failed, please, inspect the following" +
+                                    " reason and reload. Otherwise players won't be able to download your" +
+                                    " resource pack",
+                            startupException
+                    );
+                });
+            } finally {
+                packFileServerRwl.writeLock().unlock();
+            }
+        }, "PackHttpServerStarter").start();
     }
 
     @Override public void onEnable() {
@@ -49,5 +75,22 @@ public final class VoidEmoji extends JavaPlugin {
     @Override public void onDisable() {
         if (reloadConfigService != null)
             reloadConfigService.shutdown();
+        packFileServerRwl.readLock().lock();
+        try {
+            if (packFileServer != null)
+                packFileServer.shutdown();
+        } finally {
+            packFileServerRwl.readLock().unlock();
+        }
+    }
+
+    private boolean saveResource(final Path path) {
+        try {
+            saveResource(path.toString(), false);
+            return path.toFile().exists();
+        } catch (final Exception resourceNotFound) {
+            getSLF4JLogger().warn("Resource {} not found: {}", path, resourceNotFound.getMessage());
+            return false;
+        }
     }
 }
